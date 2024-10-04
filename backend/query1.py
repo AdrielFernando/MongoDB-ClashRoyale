@@ -2,9 +2,10 @@ from flask import Flask, request, jsonify
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 from datetime import datetime
-
+from flask_cors import CORS
 app = Flask(__name__)
 
+CORS(app)
 # Conexão com o MongoDB (a senha será fornecida uma vez)
 senha = "sua_senha_aqui"
 uri = f"mongodb+srv://ioshuan:{senha}@cluster0.azdlm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
