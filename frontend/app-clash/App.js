@@ -3,7 +3,8 @@ import { StyleSheet, View, Text } from 'react-native';
 import { TextInput, Card, Button } from 'react-native-paper';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { calcularVitorias } from './services';
+import { DecksPorcentagem, comboCardsVictoryPercentage, calcularVitorias } from './services';
+
 
 export default function App() {
   const [card, setCard] = useState('');
@@ -25,6 +26,22 @@ export default function App() {
 
   const handleCalcularVitorias = async () => {
     await calcularVitorias(card, timestamps1Inicio, timestamps1Fim);
+  };
+
+
+  const handleListDecks = async () => {
+    try {
+      const response = await DecksPorcentagem(percentage, timestamps2Inicio, timestamps2Fim);
+      console.log('Resposta do Flask:', response.data);
+    } catch (error) {
+      console.error('Erro ao listar decks:', error);
+    }
+  };
+
+
+  const handleCalcularCombo = async () => {
+    const data = await comboCardsVictoryPercentage(comboCards, victoryPercentage, timestamps5Inicio, timestamps5Fim);
+    console.log('Resposta do serviço de combo:', data);
   };
 
   return (
@@ -93,65 +110,65 @@ export default function App() {
           </Card>
 
           <Card style={styles.card}>
-            <Card.Content>
-              <Text>Liste decks com mais de X% de vitórias</Text>
-              <TextInput
-                label="Digite a porcentagem (X)"
-                value={percentage}
-                onChangeText={setPercentage}
-                keyboardType="numeric"
-                mode="outlined"
-                style={styles.input}
-              />
-              <View style={styles.datePickerContainer}>
-                <DatePicker
-                  selected={timestamps2Inicio}
-                  onChange={(date) => setTimestamps2Inicio(date)}
-                  dateFormat="dd-MM-yyyy"
-                  placeholderText="Data início"
-                  className="datePicker-wrapper"
-                  popperPlacement="top" // Abrindo para cima
-                  popperModifiers={{
-                    offset: {
-                      enabled: true,
-                      offset: '0, -5', // Ajusta o offset do calendário
-                    },
-                    preventOverflow: {
-                      enabled: true,
-                      escapeWithReference: false,
-                    },
-                  }}
-                  wrapperClassName="datePicker-wrapper" // Class para estilização
-                />
-                <DatePicker
-                  selected={timestamps2Fim}
-                  onChange={(date) => setTimestamps2Fim(date)}
-                  dateFormat="dd-MM-yyyy"
-                  placeholderText="Data final"
-                  className="datePicker-wrapper"
-                  popperPlacement="top" // Abrindo para cima
-                  popperModifiers={{
-                    offset: {
-                      enabled: true,
-                      offset: '0, -5', // Ajusta o offset do calendário
-                    },
-                    preventOverflow: {
-                      enabled: true,
-                      escapeWithReference: false,
-                    },
-                  }}
-                  wrapperClassName="datePicker-wrapper" // Class para estilização
-                />
-              </View>
-            </Card.Content>
-            <Button
-              mode="contained"
-              onPress={() => console.log('Porcentagem e Timestamp:', percentage, timestamps2)}
-              style={styles.button}
-            >
-              Procurar
-            </Button>
-          </Card>
+  <Card.Content>
+    <Text>Liste decks com mais de X% de vitórias</Text>
+    <TextInput
+      label="Digite a porcentagem (X)"
+      value={percentage}
+      onChangeText={setPercentage}
+      keyboardType="numeric"
+      mode="outlined"
+      style={styles.input}
+    />
+    <View style={styles.datePickerContainer}>
+      <DatePicker
+        selected={timestamps2Inicio}
+        onChange={(date) => setTimestamps2Inicio(date)}
+        dateFormat="dd-MM-yyyy"
+        placeholderText="Data início"
+        className="datePicker-wrapper"
+        popperPlacement="top" 
+        popperModifiers={{
+          offset: {
+            enabled: true,
+            offset: '0, -5', 
+          },
+          preventOverflow: {
+            enabled: true,
+            escapeWithReference: false,
+          },
+        }}
+        wrapperClassName="datePicker-wrapper" 
+      />
+      <DatePicker
+        selected={timestamps2Fim}
+        onChange={(date) => setTimestamps2Fim(date)}
+        dateFormat="dd-MM-yyyy"
+        placeholderText="Data final"
+        className="datePicker-wrapper"
+        popperPlacement="top" 
+        popperModifiers={{
+          offset: {
+            enabled: true,
+            offset: '0, -5', 
+          },
+          preventOverflow: {
+            enabled: true,
+            escapeWithReference: false,
+          },
+        }}
+        wrapperClassName="datePicker-wrapper" 
+      />
+    </View>
+  </Card.Content>
+  <Button
+    mode="contained"
+    onPress={handleListDecks}
+    style={styles.button}
+  >
+    Procurar
+  </Button>
+</Card>
 
           <Card style={styles.card}>
             <Card.Content>
@@ -243,17 +260,9 @@ export default function App() {
 
           <Card style={styles.card}>
             <Card.Content>
-              <Text>Combo de cartas de tamanho N com mais de Y% de vitórias</Text>
+              <Text>Calcule a porcentagem de vitórias de combos</Text>
               <TextInput
-                label="Digite o tamanho do combo (N)"
-                value={comboSize}
-                onChangeText={setComboSize}
-                keyboardType="numeric"
-                mode="outlined"
-                style={styles.input}
-              />
-              <TextInput
-                label="Digite a porcentagem (Y)"
+                label="Digite a porcentagem de vitórias"
                 value={victoryPercentage}
                 onChangeText={setVictoryPercentage}
                 keyboardType="numeric"
@@ -267,18 +276,18 @@ export default function App() {
                   dateFormat="dd-MM-yyyy"
                   placeholderText="Data início"
                   className="datePicker-wrapper"
-                  popperPlacement="top" // Abrindo para cima
+                  popperPlacement="top"
                   popperModifiers={{
                     offset: {
                       enabled: true,
-                      offset: '0, -5', // Ajusta o offset do calendário
+                      offset: '0, -5',
                     },
                     preventOverflow: {
                       enabled: true,
                       escapeWithReference: false,
                     },
                   }}
-                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                  wrapperClassName="datePicker-wrapper"
                 />
                 <DatePicker
                   selected={timestamps5Fim}
@@ -286,24 +295,24 @@ export default function App() {
                   dateFormat="dd-MM-yyyy"
                   placeholderText="Data final"
                   className="datePicker-wrapper"
-                  popperPlacement="top" // Abrindo para cima
+                  popperPlacement="top"
                   popperModifiers={{
                     offset: {
                       enabled: true,
-                      offset: '0, -5', // Ajusta o offset do calendário
+                      offset: '0, -5',
                     },
                     preventOverflow: {
                       enabled: true,
                       escapeWithReference: false,
                     },
                   }}
-                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                  wrapperClassName="datePicker-wrapper"
                 />
               </View>
             </Card.Content>
             <Button
               mode="contained"
-              onPress={() => console.log('Tamanho do combo, Y% e Timestamp:', comboSize, victoryPercentage)}
+              onPress={handleCalcularCombo}
               style={styles.button}
             >
               Procurar

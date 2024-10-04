@@ -33,17 +33,14 @@ def listar_combos_com_vitorias(tamanho_combo, min_porcentagem, start_time, end_t
 @app.route('/combos', methods=['GET'])
 def combos():
     try:
-        # Obtém os parâmetros da requisição
         tamanho_combo = int(request.args.get('tamanho_combo', 3))
         min_porcentagem = float(request.args.get('min_porcentagem', 80.0))
         start_time_str = request.args.get('start_time')
         end_time_str = request.args.get('end_time')
 
-        # Converte strings para objetos datetime
         start_time = datetime.strptime(start_time_str, "%Y-%m-%d %H:%M:%S")
         end_time = datetime.strptime(end_time_str, "%Y-%m-%d %H:%M:%S")
 
-        # Lista os combos de cartas
         combos = listar_combos_com_vitorias(tamanho_combo, min_porcentagem, start_time, end_time)
 
         return jsonify(combos)
