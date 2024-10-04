@@ -1,52 +1,37 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
-import { TextInput, Card, Button } from 'react-native-paper'; 
+import { TextInput, Card, Button } from 'react-native-paper';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-
-import { StatusBar } from 'expo-status-bar';
+import { calcularVitorias } from './services';
 
 export default function App() {
-  // Estado para todos os parâmetros necessários
-  const [card, setCard] = useState(''); // Carta X
-  const [card2, setCard2] = useState(''); // Carta X
-  const [percentage, setPercentage] = useState(''); // Porcentagem X
-  const [timestamps1Inicio, setTimestamps1Inicio] = useState(''); // Intervalo de timestamps
-  const [timestamps1Fim, setTimestamps1Fim] = useState(''); // Intervalo de timestamps
-  const [timestamps2, setTimestamps2] = useState(''); // Intervalo de timestamps
-  const [timestamps3, setTimestamps3] = useState(''); // Intervalo de timestamps
-  const [timestamps4, setTimestamps4] = useState(''); // Intervalo de timestamps
-  const [comboCards, setComboCards] = useState(''); // Combo de cartas (X1,X2,...)
-  const [trophyPercentage, setTrophyPercentage] = useState(''); // Z%
-  const [duration, setDuration] = useState(''); // Duração da partida
-  const [towerCount, setTowerCount] = useState(''); // Número de torres derrubadas
-  const [comboSize, setComboSize] = useState(''); // Tamanho N do combo
-  const [victoryPercentage, setVictoryPercentage] = useState(''); // Y%
+  const [card, setCard] = useState('');
+  const [card2, setCard2] = useState('');
+  const [percentage, setPercentage] = useState('');
+  const [timestamps1Inicio, setTimestamps1Inicio] = useState(null);
+  const [timestamps1Fim, setTimestamps1Fim] = useState(null);
+  const [timestamps2Inicio, setTimestamps2Inicio] = useState(null);
+  const [timestamps2Fim, setTimestamps2Fim] = useState(null);
+  const [timestamps3Inicio, setTimestamps3Inicio] = useState(null);
+  const [timestamps3Fim, setTimestamps3Fim] = useState(null);
+  const [timestamps4, setTimestamps4] = useState(null);
+  const [timestamps5Inicio, setTimestamps5Inicio] = useState(null);
+  const [timestamps5Fim, setTimestamps5Fim] = useState(null);
+  const [comboCards, setComboCards] = useState('');
+  const [trophyPercentage, setTrophyPercentage] = useState('');
+  const [comboSize, setComboSize] = useState('');
+  const [victoryPercentage, setVictoryPercentage] = useState('');
 
-
-  const calcularVitorias = async () => {
-    try {
-      const response = await fetch(`http://localhost:5000/vitorias?carta_id=${card}&start_time=${timestamps1Inicio}&end_time=${timestamps1Fim}`);
-      const data = await response.json();
-
-      if (response.ok) {
-        console.log('Porcentagem de vitórias:', data);
-        // Aqui você pode armazenar os dados na sua state, se necessário
-      } else {
-        console.error('Erro:', data.error);
-      }
-    } catch (error) {
-      console.error('Erro ao fazer a requisição:', error);
-    }
+  const handleCalcularVitorias = async () => {
+    await calcularVitorias(card, timestamps1Inicio, timestamps1Fim);
   };
-
 
   return (
     <>
-      <View style={styles.app}>      
+      <View style={styles.app}>
         <View style={styles.gridContainer}>
 
-          {/* 1. Calcule a porcentagem de vitórias e derrotas utilizando a carta X */}
           <Card style={styles.card}>
             <Card.Content>
               <Text>Calcule a porcentagem de vitórias e derrotas</Text>
@@ -54,52 +39,59 @@ export default function App() {
                 label="Digite a carta (X)"
                 value={card}
                 onChangeText={setCard}
-                mode="outlined" 
+                mode="outlined"
                 style={styles.input}
               />
-              {/* <TextInput
-                label="Digite o intervalo de timestamps"
-                value={}
-                onChangeText={}
-                mode="outlined" 
-                style={styles.input}
-              /> */}
-
-              <DatePicker 
-              style={styles.DatePicker}
-                selected={timestamps1Inicio} 
-                onChange={setTimestamps1Inicio} 
-                dateFormat="dd-MM-yyyy" // Formato da data
-                placeholderText="data inicio"
-              />
-
-              <DatePicker 
-                style={styles.DatePicker}
-                selected={timestamps1Fim} 
-                onChange={setTimestamps1Fim} 
-                dateFormat="dd-MM-yyyy" // Formato da data
-                placeholderText="data final"
-              />
-
-              {/* <TextInput
-                label="Digite o intervalo de timestamps"
-                value={timestamps1Fim}
-                onChangeText={setTimestamps1Fim}
-                mode="outlined" 
-                style={styles.input}
-              /> */}
-            
+              <View style={styles.datePickerContainer}>
+                <DatePicker
+                  selected={timestamps1Inicio}
+                  onChange={(date) => setTimestamps1Inicio(date)}
+                  dateFormat="dd-MM-yyyy"
+                  placeholderText="Data início"
+                  className="datePicker-wrapper"
+                  popperPlacement="top" // Abrindo para cima
+                  popperModifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '0, -5', // Ajusta o offset do calendário
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      escapeWithReference: false,
+                    },
+                  }}
+                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                />
+                <DatePicker
+                  selected={timestamps1Fim}
+                  onChange={(date) => setTimestamps1Fim(date)}
+                  dateFormat="dd-MM-yyyy"
+                  placeholderText="Data final"
+                  className="datePicker-wrapper"
+                  popperPlacement="top" // Abrindo para cima
+                  popperModifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '0, -5', // Ajusta o offset do calendário
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      escapeWithReference: false,
+                    },
+                  }}
+                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                />
+              </View>
             </Card.Content>
-            <Button 
-              mode="contained" 
-              onPress={calcularVitorias} 
+            <Button
+              mode="contained"
+              onPress={handleCalcularVitorias}
               style={styles.button}
             >
               Procurar
             </Button>
           </Card>
 
-          {/* 2. Liste os decks completos que produziram mais de X% de vitórias */}
           <Card style={styles.card}>
             <Card.Content>
               <Text>Liste decks com mais de X% de vitórias</Text>
@@ -111,24 +103,56 @@ export default function App() {
                 mode="outlined"
                 style={styles.input}
               />
-              <TextInput
-                label="Digite o intervalo de timestamps"
-                value={timestamps2}
-                onChangeText={setTimestamps2}
-                mode="outlined" 
-                style={styles.input}
-              />
+              <View style={styles.datePickerContainer}>
+                <DatePicker
+                  selected={timestamps2Inicio}
+                  onChange={(date) => setTimestamps2Inicio(date)}
+                  dateFormat="dd-MM-yyyy"
+                  placeholderText="Data início"
+                  className="datePicker-wrapper"
+                  popperPlacement="top" // Abrindo para cima
+                  popperModifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '0, -5', // Ajusta o offset do calendário
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      escapeWithReference: false,
+                    },
+                  }}
+                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                />
+                <DatePicker
+                  selected={timestamps2Fim}
+                  onChange={(date) => setTimestamps2Fim(date)}
+                  dateFormat="dd-MM-yyyy"
+                  placeholderText="Data final"
+                  className="datePicker-wrapper"
+                  popperPlacement="top" // Abrindo para cima
+                  popperModifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '0, -5', // Ajusta o offset do calendário
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      escapeWithReference: false,
+                    },
+                  }}
+                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                />
+              </View>
             </Card.Content>
-            <Button 
-              mode="contained" 
-              onPress={() => console.log('Porcentagem e Timestamp:', percentage, timestamps2)} 
+            <Button
+              mode="contained"
+              onPress={() => console.log('Porcentagem e Timestamp:', percentage, timestamps2)}
               style={styles.button}
             >
               Procurar
             </Button>
           </Card>
 
-          {/* 3. Calcule a quantidade de derrotas utilizando o combo de cartas */}
           <Card style={styles.card}>
             <Card.Content>
               <Text>Calcule derrotas com combo de cartas</Text>
@@ -139,24 +163,56 @@ export default function App() {
                 mode="outlined"
                 style={styles.input}
               />
-              <TextInput
-                label="Digite o intervalo de timestamps"
-                value={timestamps3} // Reutilizando o primeiro timestamp
-                onChangeText={setTimestamps3}
-                mode="outlined" 
-                style={styles.input}
-              />
+              <View style={styles.datePickerContainer}>
+                <DatePicker
+                  selected={timestamps3Inicio}
+                  onChange={(date) => setTimestamps3Inicio(date)}
+                  dateFormat="dd-MM-yyyy"
+                  placeholderText="Data início"
+                  className="datePicker-wrapper"
+                  popperPlacement="top" // Abrindo para cima
+                  popperModifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '0, -5', // Ajusta o offset do calendário
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      escapeWithReference: false,
+                    },
+                  }}
+                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                />
+                <DatePicker
+                  selected={timestamps3Fim}
+                  onChange={(date) => setTimestamps3Fim(date)}
+                  dateFormat="dd-MM-yyyy"
+                  placeholderText="Data final"
+                  className="datePicker-wrapper"
+                  popperPlacement="top" // Abrindo para cima
+                  popperModifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '0, -5', // Ajusta o offset do calendário
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      escapeWithReference: false,
+                    },
+                  }}
+                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                />
+              </View>
             </Card.Content>
-            <Button 
-              mode="contained" 
-              onPress={() => console.log('Combo de cartas e Timestamp:', comboCards, timestamps3)} 
+            <Button
+              mode="contained"
+              onPress={() => console.log('Combo de cartas e Timestamp:', comboCards, timestamps3)}
               style={styles.button}
             >
               Procurar
             </Button>
           </Card>
 
-          {/* 4. Calcule a quantidade de vitórias envolvendo a carta X */}
           <Card style={styles.card}>
             <Card.Content>
               <Text>Vitórias com carta X e condições específicas</Text>
@@ -174,18 +230,17 @@ export default function App() {
                 keyboardType="numeric"
                 mode="outlined"
                 style={styles.input}
-              />             
+              />
             </Card.Content>
-            <Button 
-              mode="contained" 
-              onPress={() => console.log('Carta, Z%, Duração e Torres:', card, trophyPercentage, duration, towerCount)} 
+            <Button
+              mode="contained"
+              onPress={() => console.log('Carta, Z%, Duração e Torres:', card2, trophyPercentage, duration, towerCount)}
               style={styles.button}
             >
               Procurar
             </Button>
           </Card>
 
-          {/* 5. Liste o combo de cartas de tamanho N que produziu mais de Y% de vitórias */}
           <Card style={styles.card}>
             <Card.Content>
               <Text>Combo de cartas de tamanho N com mais de Y% de vitórias</Text>
@@ -205,22 +260,55 @@ export default function App() {
                 mode="outlined"
                 style={styles.input}
               />
-              <TextInput
-                label="Digite o intervalo de timestamps"
-                value={timestamps3} // Reutilizando o primeiro timestamp
-                onChangeText={setTimestamps4}
-                mode="outlined" 
-                style={styles.input}
-              />
+              <View style={styles.datePickerContainer}>
+                <DatePicker
+                  selected={timestamps5Inicio}
+                  onChange={(date) => setTimestamps5Inicio(date)}
+                  dateFormat="dd-MM-yyyy"
+                  placeholderText="Data início"
+                  className="datePicker-wrapper"
+                  popperPlacement="top" // Abrindo para cima
+                  popperModifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '0, -5', // Ajusta o offset do calendário
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      escapeWithReference: false,
+                    },
+                  }}
+                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                />
+                <DatePicker
+                  selected={timestamps5Fim}
+                  onChange={(date) => setTimestamps5Fim(date)}
+                  dateFormat="dd-MM-yyyy"
+                  placeholderText="Data final"
+                  className="datePicker-wrapper"
+                  popperPlacement="top" // Abrindo para cima
+                  popperModifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '0, -5', // Ajusta o offset do calendário
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      escapeWithReference: false,
+                    },
+                  }}
+                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                />
+              </View>
             </Card.Content>
-            <Button 
-              mode="contained" 
-              onPress={() => console.log('Tamanho do combo, Y% e Timestamp:', comboSize, victoryPercentage, timestamps4)} 
+            <Button
+              mode="contained"
+              onPress={() => console.log('Tamanho do combo, Y% e Timestamp:', comboSize, victoryPercentage)}
               style={styles.button}
             >
               Procurar
             </Button>
-          </Card>         
+          </Card>
         </View>
       </View>
     </>
@@ -233,14 +321,13 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: '100%',
-    padding: '5%'
+    paddingTop: '8%'
   },
-  gridContainer: { 
-    flexDirection: 'row',          
-    flexWrap: 'wrap',              
-    justifyContent: 'center', 
-    width: '100%',                
-    paddingHorizontal: 10,      
+  gridContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'center',
+    width: '100%',
   },
   card: {
     width: '45%',
@@ -252,12 +339,11 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   button: {
-    marginTop: 20,
-    width: '60%',
-    alignSelf: 'center'
+    marginTop: 10,
   },
-  DatePicker: {
-    zIndex:9999,
-    position:'relative'
-  }
+  datePickerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginVertical: 10,
+  },
 });
