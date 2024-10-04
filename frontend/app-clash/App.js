@@ -1,6 +1,9 @@
 import React, { useState } from 'react';
 import { StyleSheet, View, Text } from 'react-native';
 import { TextInput, Card, Button } from 'react-native-paper'; 
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
+
 import { StatusBar } from 'expo-status-bar';
 
 export default function App() {
@@ -8,7 +11,8 @@ export default function App() {
   const [card, setCard] = useState(''); // Carta X
   const [card2, setCard2] = useState(''); // Carta X
   const [percentage, setPercentage] = useState(''); // Porcentagem X
-  const [timestamps1, setTimestamps1] = useState(''); // Intervalo de timestamps
+  const [timestamps1Inicio, setTimestamps1Inicio] = useState(''); // Intervalo de timestamps
+  const [timestamps1Fim, setTimestamps1Fim] = useState(''); // Intervalo de timestamps
   const [timestamps2, setTimestamps2] = useState(''); // Intervalo de timestamps
   const [timestamps3, setTimestamps3] = useState(''); // Intervalo de timestamps
   const [timestamps4, setTimestamps4] = useState(''); // Intervalo de timestamps
@@ -18,6 +22,24 @@ export default function App() {
   const [towerCount, setTowerCount] = useState(''); // Número de torres derrubadas
   const [comboSize, setComboSize] = useState(''); // Tamanho N do combo
   const [victoryPercentage, setVictoryPercentage] = useState(''); // Y%
+
+
+  const calcularVitorias = async () => {
+    try {
+      const response = await fetch(`http://localhost:5000/vitorias?carta_id=${card}&start_time=${timestamps1Inicio}&end_time=${timestamps1Fim}`);
+      const data = await response.json();
+
+      if (response.ok) {
+        console.log('Porcentagem de vitórias:', data);
+        // Aqui você pode armazenar os dados na sua state, se necessário
+      } else {
+        console.error('Erro:', data.error);
+      }
+    } catch (error) {
+      console.error('Erro ao fazer a requisição:', error);
+    }
+  };
+
 
   return (
     <>
@@ -35,17 +57,42 @@ export default function App() {
                 mode="outlined" 
                 style={styles.input}
               />
-              <TextInput
+              {/* <TextInput
                 label="Digite o intervalo de timestamps"
-                value={timestamps1}
-                onChangeText={setTimestamps1}
+                value={}
+                onChangeText={}
                 mode="outlined" 
                 style={styles.input}
+              /> */}
+
+              <DatePicker 
+              style={styles.DatePicker}
+                selected={timestamps1Inicio} 
+                onChange={setTimestamps1Inicio} 
+                dateFormat="dd-MM-yyyy" // Formato da data
+                placeholderText="data inicio"
               />
+
+              <DatePicker 
+                style={styles.DatePicker}
+                selected={timestamps1Fim} 
+                onChange={setTimestamps1Fim} 
+                dateFormat="dd-MM-yyyy" // Formato da data
+                placeholderText="data final"
+              />
+
+              {/* <TextInput
+                label="Digite o intervalo de timestamps"
+                value={timestamps1Fim}
+                onChangeText={setTimestamps1Fim}
+                mode="outlined" 
+                style={styles.input}
+              /> */}
+            
             </Card.Content>
             <Button 
               mode="contained" 
-              onPress={() => console.log('Carta e Timestamp:', card, timestamps1)} 
+              onPress={calcularVitorias} 
               style={styles.button}
             >
               Procurar
@@ -208,5 +255,9 @@ const styles = StyleSheet.create({
     marginTop: 20,
     width: '60%',
     alignSelf: 'center'
+  },
+  DatePicker: {
+    zIndex:9999,
+    position:'relative'
   }
 });
