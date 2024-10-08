@@ -3,12 +3,12 @@ import { StyleSheet, View, Text } from 'react-native';
 import { TextInput, Card, Button } from 'react-native-paper';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
-import { DecksPorcentagem, comboCardsVictoryPercentage, calcularVitorias } from './services';
+import { DecksPorcentagem, comboCardsVictoryPercentage, calcularVitorias, serviceQuery03 } from './services';
 
 
 export default function App() {
   const [card, setCard] = useState('');
-  const [card2, setCard2] = useState('');
+  const [query04, setQuery04] = useState('');
   const [percentage, setPercentage] = useState('');
   const [timestamps1Inicio, setTimestamps1Inicio] = useState(null);
   const [timestamps1Fim, setTimestamps1Fim] = useState(null);
@@ -20,7 +20,7 @@ export default function App() {
   const [timestamps5Inicio, setTimestamps5Inicio] = useState(null);
   const [timestamps5Fim, setTimestamps5Fim] = useState(null);
   const [comboCards, setComboCards] = useState('');
-  const [trophyPercentage, setTrophyPercentage] = useState('');
+  const [percentageQuery04, setPercentage04] = useState('');
   const [comboSize, setComboSize] = useState('');
   const [victoryPercentage, setVictoryPercentage] = useState('');
 
@@ -43,6 +43,10 @@ export default function App() {
     const data = await comboCardsVictoryPercentage(comboCards, victoryPercentage, timestamps5Inicio, timestamps5Fim);
     console.log('Resposta do serviço de combo:', data);
   };
+
+  const handleQuery03 = async() => {
+    const data = await serviceQuery03(query04, percentageQuery04)
+  }
 
   return (
     <>
@@ -109,66 +113,68 @@ export default function App() {
             </Button>
           </Card>
 
+
           <Card style={styles.card}>
-  <Card.Content>
-    <Text>Liste decks com mais de X% de vitórias</Text>
-    <TextInput
-      label="Digite a porcentagem (X)"
-      value={percentage}
-      onChangeText={setPercentage}
-      keyboardType="numeric"
-      mode="outlined"
-      style={styles.input}
-    />
-    <View style={styles.datePickerContainer}>
-      <DatePicker
-        selected={timestamps2Inicio}
-        onChange={(date) => setTimestamps2Inicio(date)}
-        dateFormat="dd-MM-yyyy"
-        placeholderText="Data início"
-        className="datePicker-wrapper"
-        popperPlacement="top" 
-        popperModifiers={{
-          offset: {
-            enabled: true,
-            offset: '0, -5', 
-          },
-          preventOverflow: {
-            enabled: true,
-            escapeWithReference: false,
-          },
-        }}
-        wrapperClassName="datePicker-wrapper" 
-      />
-      <DatePicker
-        selected={timestamps2Fim}
-        onChange={(date) => setTimestamps2Fim(date)}
-        dateFormat="dd-MM-yyyy"
-        placeholderText="Data final"
-        className="datePicker-wrapper"
-        popperPlacement="top" 
-        popperModifiers={{
-          offset: {
-            enabled: true,
-            offset: '0, -5', 
-          },
-          preventOverflow: {
-            enabled: true,
-            escapeWithReference: false,
-          },
-        }}
-        wrapperClassName="datePicker-wrapper" 
-      />
-    </View>
-  </Card.Content>
-  <Button
-    mode="contained"
-    onPress={handleListDecks}
-    style={styles.button}
-  >
-    Procurar
-  </Button>
-</Card>
+            <Card.Content>
+              <Text>Liste decks com mais de X% de vitórias</Text>
+              <TextInput
+                label="Digite a porcentagem (X)"
+                value={percentage}
+                onChangeText={setPercentage}
+                keyboardType="numeric"
+                mode="outlined"
+                style={styles.input}
+              />
+              <View style={styles.datePickerContainer}>
+                <DatePicker
+                  selected={timestamps2Inicio}
+                  onChange={(date) => setTimestamps2Inicio(date)}
+                  dateFormat="dd-MM-yyyy"
+                  placeholderText="Data início"
+                  className="datePicker-wrapper"
+                  popperPlacement="top" 
+                  popperModifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '0, -5', 
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      escapeWithReference: false,
+                    },
+                  }}
+                  wrapperClassName="datePicker-wrapper" 
+                />
+                <DatePicker
+                  selected={timestamps2Fim}
+                  onChange={(date) => setTimestamps2Fim(date)}
+                  dateFormat="dd-MM-yyyy"
+                  placeholderText="Data final"
+                  className="datePicker-wrapper"
+                  popperPlacement="top" 
+                  popperModifiers={{
+                    offset: {
+                      enabled: true,
+                      offset: '0, -5', 
+                    },
+                    preventOverflow: {
+                      enabled: true,
+                      escapeWithReference: false,
+                    },
+                  }}
+                  wrapperClassName="datePicker-wrapper" 
+                />
+              </View>
+            </Card.Content>
+            <Button
+              mode="contained"
+              // onPress={handleListDecks}
+              style={styles.button}
+            >
+              Procurar
+            </Button>
+          </Card>
+
 
           <Card style={styles.card}>
             <Card.Content>
@@ -187,18 +193,18 @@ export default function App() {
                   dateFormat="dd-MM-yyyy"
                   placeholderText="Data início"
                   className="datePicker-wrapper"
-                  popperPlacement="top" // Abrindo para cima
+                  popperPlacement="top" 
                   popperModifiers={{
                     offset: {
                       enabled: true,
-                      offset: '0, -5', // Ajusta o offset do calendário
+                      offset: '0, -5', 
                     },
                     preventOverflow: {
                       enabled: true,
                       escapeWithReference: false,
                     },
                   }}
-                  wrapperClassName="datePicker-wrapper" // Class para estilização
+                  wrapperClassName="datePicker-wrapper" 
                 />
                 <DatePicker
                   selected={timestamps3Fim}
@@ -206,11 +212,11 @@ export default function App() {
                   dateFormat="dd-MM-yyyy"
                   placeholderText="Data final"
                   className="datePicker-wrapper"
-                  popperPlacement="top" // Abrindo para cima
+                  popperPlacement="top" 
                   popperModifiers={{
                     offset: {
                       enabled: true,
-                      offset: '0, -5', // Ajusta o offset do calendário
+                      offset: '0, -5', 
                     },
                     preventOverflow: {
                       enabled: true,
@@ -223,7 +229,7 @@ export default function App() {
             </Card.Content>
             <Button
               mode="contained"
-              onPress={() => console.log('Combo de cartas e Timestamp:', comboCards, timestamps3)}
+              onPress={ handleQuery03 }
               style={styles.button}
             >
               Procurar
@@ -235,15 +241,15 @@ export default function App() {
               <Text>Vitórias com carta X e condições específicas</Text>
               <TextInput
                 label="Digite a carta (X)"
-                value={card2}
-                onChangeText={setCard2}
+                value={query04}
+                onChangeText={setQuery04}
                 mode="outlined"
                 style={styles.input}
               />
               <TextInput
                 label="Digite Z% (menos troféus)"
-                value={trophyPercentage}
-                onChangeText={setTrophyPercentage}
+                value={percentageQuery04}
+                onChangeText={setPercentage04}
                 keyboardType="numeric"
                 mode="outlined"
                 style={styles.input}
@@ -251,7 +257,7 @@ export default function App() {
             </Card.Content>
             <Button
               mode="contained"
-              onPress={() => console.log('Carta, Z%, Duração e Torres:', card2, trophyPercentage, duration, towerCount)}
+              onPress={handleListDecks}   
               style={styles.button}
             >
               Procurar
@@ -318,6 +324,8 @@ export default function App() {
               Procurar
             </Button>
           </Card>
+
+
         </View>
       </View>
     </>

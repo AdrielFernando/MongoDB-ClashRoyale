@@ -6,6 +6,7 @@ export const calcularVitorias = async (card, timestamps1Inicio, timestamps1Fim) 
       const response = await fetch(`http://localhost:5000/vitorias?carta_id=${card}&start_time=${start_time}&end_time=${end_time}`);
       const data = await response.json();
   
+      
       if (response.ok) {
         console.log('Porcentagem de vitórias:', data);
         // Aqui você pode retornar os dados para armazená-los no estado se necessário
@@ -57,4 +58,20 @@ export const comboCardsVictoryPercentage = async (comboCards, victoryPercentage,
     } catch (error) {
       console.error('Erro ao fazer a requisição:', error);
     }
+  };
+
+  export const serviceQuery03 = async (query03, setPercentage03) => {
+
+    try {
+      const response = await fetch(`http://localhost:5000/combo_vitorias?combo=${query03}&victory_percentage=${query03}&start_time=${query03}&end_time=${setPercentage03}`);
+      const data = await response.json();
+      if (response.ok) {
+        console.log('Dados do combo de cartas:', data);
+        return data;
+      } else {
+        console.error('Erro:', data.error);
+      }
+      } catch (error) {
+        console.error('Erro ao fazer a requisição:', error);
+      }
   };
