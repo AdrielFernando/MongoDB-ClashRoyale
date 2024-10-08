@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 CORS(app)
 # Conexão com o MongoDB (a senha será fornecida uma vez)
-senha = "sua_senha_aqui"
+senha = "teste"
 uri = f"mongodb+srv://ioshuan:{senha}@cluster0.azdlm.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 # conexão com o MongoDB
@@ -53,7 +53,9 @@ def vitorias():
 
         return jsonify({
             'carta_id': carta_id,
-            'porcentagem_vitorias': porcentagem
+            'porcentagem_vitorias': porcentagem,
+            'start_time' : start_time,
+            'end_time' : end_time
         })
 
     except Exception as e:

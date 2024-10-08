@@ -15,7 +15,6 @@ batalhas_collection = db['batalhas']
 start_time = datetime(2021, 1, 1)
 end_time = datetime(2021, 6, 30) 
 
-# Converta start_time_str_str e end_time_str_str para o formato correto
 start_time_str = start_time.strftime("%Y-%m-%d %H:%M:%S%z")
 end_time_str = end_time.strftime("%Y-%m-%d %H:%M:%S%z")
 
